@@ -2,7 +2,7 @@ object Symbol extends Enumeration {
   type Symbol = Value
   val X, O = Value
 }
-import Symbol.{Symbol, _}
+import Symbol.Symbol
 import Util.{isPerfectSquare, scanF}
 
 object Board {
@@ -11,6 +11,9 @@ object Board {
 
 class Board(val cells: Seq[Option[Symbol]]) {
   type GameOutcome = Option[Symbol]
+
+  private val semilattice: Semilattice[GameOutcome] =
+    Semilattice.fromOperation((x, y) => if (x == y) x else None)
 
   if (!isPerfectSquare(cells.length)) {
     throw new Exception("Invalid board size")
@@ -37,10 +40,7 @@ class Board(val cells: Seq[Option[Symbol]]) {
   def isFinal: Boolean = outcome.isDefined || cells.forall(_.isDefined)
 
   lazy val outcome: GameOutcome = {
-    // The set of game outcomes under this product is a semilattice with zero (None)
-    def product(s1: GameOutcome, s2: GameOutcome): GameOutcome = if (s1 == s2) s1 else None
-
-    def winner(array: Seq[Int]): GameOutcome = array.map(cells).reduceLeft(product)
+    def winner(array: Seq[Int]): GameOutcome = array map cells reduceLeft semilattice.<>
 
     def checkRows(): GameOutcome = check(firstRow, nextRow, n)
 
@@ -49,11 +49,10 @@ class Board(val cells: Seq[Option[Symbol]]) {
     def checkDiagonals(): GameOutcome = check(mainDiagonal, (_: Seq[Int]) => secondaryDiagonal, 2)
 
     def check(initial: Seq[Int], f: Seq[Int] => Seq[Int], n: Int): GameOutcome = {
-      // TODO Can we do this lazily (i.e., without generating the whole sequence)?
-      scanF(initial, f, n).map(winner).find(_.isDefined).getOrElse(None)
+      scanF(initial, f, n) map winner find (_.isDefined) getOrElse None
     }
 
-    Array(checkColumns(), checkDiagonals(), checkRows()).find(_.isDefined).flatten
+    semilattice.findMaximal(checkColumns(), checkDiagonals(), checkRows())
   }
 
   override def toString: String = {
