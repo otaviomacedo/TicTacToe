@@ -21,21 +21,17 @@ class User(symbol: Symbol) extends Player {
 }
 
 class Computer(symbol: Symbol) extends Player {
-  override def play(board: Board): Board = bestMove(symbol)(board)._1
+  private val myOrdering: Ordering[Option[Symbol.Value]] = explicitOrdering(Some(O), None, Some(X))
 
-  private def bestMove(symbol: Symbol)(board: Board): (Board, Option[Symbol]) = {
+  override def play(board: Board): Board = bestMove(symbol, board, myOrdering)._1
+
+  private def bestMove(symbol: Symbol, board: Board, ordering: Ordering[Option[Symbol]]): (Board, Option[Symbol]) = {
     def flip(symbol: Symbol): Symbol = if (symbol == X) O else X
-
-    // This ordering is different from the partial order of the game outcome semilattice
-    val ordering: Ordering[Option[Symbol]] = symbol match {
-      case O => explicitOrdering(Array(Some(X), None, Some(O)))
-      case X => explicitOrdering(Array(Some(O), None, Some(X)))
-    }
 
     if (board.isFinal) (board, board.outcome)
     else {
       val moves = board.possibleMoves(symbol).map {
-        board => (board, bestMove(flip(symbol))(board))
+        board => (board, bestMove(flip(symbol), board, ordering.reverse))
       }
       val x = moves.maxBy(_._2._2)(ordering)
       (x._1, x._2._2)
