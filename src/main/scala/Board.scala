@@ -9,7 +9,7 @@ object Board {
   def newInstance(n: Int) = new Board(Array.fill[Option[Symbol]](n * n)(None))
 }
 
-class Board(val cells: Seq[Option[Symbol]]) {
+class Board(private val cells: Seq[Option[Symbol]]) {
   type GameOutcome = Option[Symbol]
 
   private val semilattice: Semilattice[GameOutcome] =
@@ -42,16 +42,11 @@ class Board(val cells: Seq[Option[Symbol]]) {
   lazy val outcome: GameOutcome = {
     def winner(array: Seq[Int]): GameOutcome = array map cells reduceLeft semilattice.<>
 
-    def checkRows(): GameOutcome = check(firstRow, nextRow, n)
+    val rows = scanF(firstRow, nextRow, n) map winner
+    val columns = scanF(firstColumn, nextColumn, n) map winner
+    val diagonals = scanF(mainDiagonal, nextDiagonal, 2) map winner
 
-    def checkColumns(): GameOutcome = check(firstColumn, nextColumn, n)
-
-    def checkDiagonals(): GameOutcome = check(mainDiagonal, nextDiagonal, 2)
-
-    def check(initial: Seq[Int], f: Seq[Int] => Seq[Int], n: Int): GameOutcome =
-      semilattice.findMaximal(scanF(initial, f, n) map winner:_*)
-
-    semilattice.findMaximal(checkColumns(), checkDiagonals(), checkRows())
+    semilattice.findMaximal(Vector(rows, columns, diagonals).flatten)
   }
 
   override def toString: String = {

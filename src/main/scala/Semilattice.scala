@@ -3,7 +3,7 @@ import scala.math.PartialOrdering
 trait Semilattice[A] {
   def <>(x: A, y: A): A
   def ordering: PartialOrdering[A]
-  def findMaximal(as: A*): A = as.reduceLeft((x: A, y: A) => if (ordering.lteq(x, y)) y else x)
+  def findMaximal(as: Seq[A]): A = as.reduceLeft((x: A, y: A) => if (ordering.lteq(x, y)) y else x)
 }
 
 object Semilattice {
