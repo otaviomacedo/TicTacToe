@@ -25,7 +25,7 @@ class Board(val cells: Seq[Option[Symbol]]) {
   private val firstColumn: Seq[Int] = 0 until n map (_ * n)
   private val nextColumn = (r: Seq[Int]) => r.map(_ + 1)
   private val mainDiagonal: Seq[Int] = 0 until n map (_ * (n + 1))
-  private val secondaryDiagonal: Seq[Int] = (0 until n) map (x => (x + 1) * (n - 1))
+  private val nextDiagonal = (r: Seq[Int]) => r.map(x => x + (n*n - 1 - 2 * x) / (n + 1))
 
   def mark(symbol: Symbol, index: Int): Board = {
     if (cells(index).isDefined)
@@ -46,7 +46,7 @@ class Board(val cells: Seq[Option[Symbol]]) {
 
     def checkColumns(): GameOutcome = check(firstColumn, nextColumn, n)
 
-    def checkDiagonals(): GameOutcome = check(mainDiagonal, (_: Seq[Int]) => secondaryDiagonal, 2)
+    def checkDiagonals(): GameOutcome = check(mainDiagonal, nextDiagonal, 2)
 
     def check(initial: Seq[Int], f: Seq[Int] => Seq[Int], n: Int): GameOutcome = {
       scanF(initial, f, n) map winner find (_.isDefined) getOrElse None
