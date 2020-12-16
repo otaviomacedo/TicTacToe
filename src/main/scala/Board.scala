@@ -48,9 +48,8 @@ class Board(val cells: Seq[Option[Symbol]]) {
 
     def checkDiagonals(): GameOutcome = check(mainDiagonal, nextDiagonal, 2)
 
-    def check(initial: Seq[Int], f: Seq[Int] => Seq[Int], n: Int): GameOutcome = {
-      scanF(initial, f, n) map winner find (_.isDefined) getOrElse None
-    }
+    def check(initial: Seq[Int], f: Seq[Int] => Seq[Int], n: Int): GameOutcome =
+      semilattice.findMaximal(scanF(initial, f, n) map winner:_*)
 
     semilattice.findMaximal(checkColumns(), checkDiagonals(), checkRows())
   }
