@@ -24,7 +24,7 @@ object Util {
   @tailrec
   def nTimes[A](n: Int, f: A => A, a: A): A = if (n == 0) a else nTimes(n - 1, f, f(a))
 
-  def explicitOrdering[T](array: Array[T]): Ordering[T] = {
+  def explicitOrdering[T](array: T*): Ordering[T] = {
     // TODO Handle the case in which the element is not in the array
     (x: T, y: T) => array.indexOf(x).compareTo(array.indexOf(y))
   }
