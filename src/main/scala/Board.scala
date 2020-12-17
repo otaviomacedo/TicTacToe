@@ -37,23 +37,15 @@ class Board(val cells: Seq[Option[Symbol]]) {
   def isFinal: Boolean = outcome.isDefined || cells.forall(_.isDefined)
 
   lazy val outcome: GameOutcome = {
-    // The set of game outcomes under this product is a semilattice with zero (None)
     def product(s1: GameOutcome, s2: GameOutcome): GameOutcome = if (s1 == s2) s1 else None
 
-    def winner(array: Seq[Int]): GameOutcome = array.map(cells).reduceLeft(product)
+    def winner(array: Seq[Int]): GameOutcome = array map cells reduceLeft product
 
-    def checkRows(): GameOutcome = check(firstRow, nextRow, n)
+    val rows = scanF(firstRow, nextRow, n) map winner
+    val columns = scanF(firstColumn, nextColumn, n) map winner
+    val diagonals = scanF(mainDiagonal, nextDiagonal, 2) map winner
 
-    def checkColumns(): GameOutcome = check(firstColumn, nextColumn, n)
-
-    def checkDiagonals(): GameOutcome = check(mainDiagonal, nextDiagonal, 2)
-
-    def check(initial: Seq[Int], f: Seq[Int] => Seq[Int], n: Int): GameOutcome = {
-      // TODO Can we do this lazily (i.e., without generating the whole sequence)?
-      scanF(initial, f, n).map(winner).find(_.isDefined).getOrElse(None)
-    }
-
-    Array(checkColumns(), checkDiagonals(), checkRows()).find(_.isDefined).flatten
+    Vector(rows, columns, diagonals).flatten find(_.isDefined) getOrElse None
   }
 
   override def toString: String = {
