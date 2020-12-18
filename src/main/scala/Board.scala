@@ -12,9 +12,7 @@ object Board {
 case class Board(cells: Seq[Option[Symbol]]) {
   type GameOutcome = Option[Symbol]
 
-  if (!isPerfectSquare(cells.length)) {
-    throw new Exception("Invalid board size")
-  }
+  require(isPerfectSquare(cells.length), "Invalid board size")
 
   private val n = Math.sqrt(cells.length).toInt
 
@@ -31,10 +29,8 @@ case class Board(cells: Seq[Option[Symbol]]) {
   private def diagonals: Seq[Seq[Int]] = scanF(mainDiagonal, nextDiagonal, 2)
 
   def mark(symbol: Symbol, index: Int): Board = {
-    if (cells(index).isDefined)
-      throw new Exception(s"Position $index already marked")
-    else
-      new Board(cells.updated(index, Some(symbol)))
+    require(cells(index).isEmpty, s"Position $index already marked")
+    new Board(cells.updated(index, Some(symbol)))
   }
 
   def possibleMoves(symbol: Symbol): Seq[Board] =
