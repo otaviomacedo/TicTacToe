@@ -45,8 +45,6 @@ object Game {
   private val user = new User(Symbol.O)
   private val computer = new Computer(Symbol.X)
 
-  val players: Iterator[Player] = Iterator.continually(List(user, computer)).flatten
-
   case class State(board: Board, player: Player) {
     override def toString: String = {
       val footer = if (board.isFinal) "\n" + result(board) else ""
