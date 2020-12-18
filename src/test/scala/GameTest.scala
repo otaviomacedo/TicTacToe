@@ -13,30 +13,30 @@ class GameTest extends AnyFunSuite with MockitoSugar {
   val player2: Player = mock[Player]
 
   test("Game unravelling") {
-    when(player1.play(any())).thenReturn(Board(Vector(
+    when(player1 play any()) thenReturn Board(Vector(
       x, e, e,
       e, e, e,
-      e, e, e)))
+      e, e, e))
 
-    when(player2.play(any())).thenReturn(Board(Vector(
+    when(player2 play any()) thenReturn Board(Vector(
       x, o, e,
       e, e, e,
-      e, e, e)))
+      e, e, e))
 
-    when(player1.play(any())).thenReturn(Board(Vector(
+    when(player1 play any()) thenReturn Board(Vector(
       x, o, e,
       x, e, e,
-      e, e, e)))
+      e, e, e))
 
-    when(player2.play(any())).thenReturn(Board(Vector(
+    when(player2 play any()) thenReturn Board(Vector(
       x, o, e,
       x, o, e,
-      e, e, e)))
+      e, e, e))
 
-    when(player1.play(any())).thenReturn(Board(Vector(
+    when(player1 play any()) thenReturn Board(Vector(
       x, o, e,
       x, o, e,
-      x, e, e)))
+      x, e, e))
 
     val history = Game(player1, player2).unravel()
 
@@ -45,6 +45,6 @@ class GameTest extends AnyFunSuite with MockitoSugar {
       x, o, e,
       x, e, e)))
 
-    assert(history.last.board.outcome.contains(Symbol.X))
+    assert(history.last.board.outcome contains Symbol.X)
   }
 }
