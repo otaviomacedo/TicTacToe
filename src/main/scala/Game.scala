@@ -45,27 +45,25 @@ class Game {
     val computer = new Computer(Symbol.X)
     var board = Board.newInstance(3)
 
+    println(board)
+    while (!endOfGame()) {
+      playersTurn(user)
+      playersTurn(computer)
+    }
+
+    println(board.outcome match {
+      case Some(X) => "I win!"
+      case Some(O) => "You win!"
+      case None => "Tie"
+    })
+
     def playersTurn(player: Player): Unit = {
       board = player.play(board)
       println(board)
       println()
     }
 
-    def endOfGame(): Boolean = {
-      if (board.isFinal) {
-        val message = board.outcome map {
-          symbol => if (symbol == X) "I win!" else "You win!"
-        } getOrElse "Tie"
-        println(message)
-      }
-      board.isFinal
-    }
-
-    println(board)
-    while (!endOfGame()) {
-      playersTurn(user)
-      playersTurn(computer)
-    }
+    def endOfGame(): Boolean = board.isFinal
   }
 }
 
