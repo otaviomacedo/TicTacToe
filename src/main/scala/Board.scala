@@ -24,9 +24,9 @@ case class Board(cells: Seq[Option[Symbol]]) {
   private val mainDiagonal: Seq[Int] = 0 until n map (_ * (n + 1))
   private val nextDiagonal = (r: Seq[Int]) => r.map(x => x + (n*n - 1 - 2 * x) / (n + 1))
 
-  private val rows = scanF(firstRow, nextRow, n)
-  private val columns = scanF(firstColumn, nextColumn, n)
-  private val diagonals = scanF(mainDiagonal, nextDiagonal, 2)
+  private def rows: Seq[Seq[Int]] = scanF(firstRow, nextRow, n)
+  private def columns: Seq[Seq[Int]] = scanF(firstColumn, nextColumn, n)
+  private def diagonals: Seq[Seq[Int]] = scanF(mainDiagonal, nextDiagonal, 2)
 
   def mark(symbol: Symbol, index: Int): Board = {
     if (cells(index).isDefined)
@@ -42,14 +42,9 @@ case class Board(cells: Seq[Option[Symbol]]) {
 
   lazy val outcome: GameOutcome = {
     def product(a: GameOutcome, b: GameOutcome): GameOutcome = if (a == b) a else None
-
     def winner(array: Seq[Int]): GameOutcome = array map cells reduce product
 
-    val rowWinner = rows map winner
-    val columnWinner = columns map winner
-    val diagonalWinner = diagonals map winner
-
-    Vector(rowWinner, columnWinner, diagonalWinner).flatten find(_.isDefined) getOrElse None
+    Vector(rows, columns, diagonals).flatten map winner find(_.isDefined) getOrElse None
   }
 
   override def toString: String = {
