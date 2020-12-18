@@ -7,7 +7,7 @@ trait Player {
   def play(board: Board): Board
 }
 
-class User(symbol: Symbol) extends Player {
+case class User(symbol: Symbol) extends Player {
   override def play(board: Board): Board = {
     try {
       board.mark(symbol, readLine().toInt)
@@ -19,7 +19,7 @@ class User(symbol: Symbol) extends Player {
   }
 }
 
-class Computer(symbol: Symbol) extends Player {
+case class Computer(symbol: Symbol) extends Player {
   private val myOrdering: Ordering[Option[Symbol.Value]] = explicitOrdering(Some(O), None, Some(X))
 
   override def play(board: Board): Board = bestMove(symbol, board, myOrdering)._1
@@ -39,11 +39,23 @@ class Computer(symbol: Symbol) extends Player {
   }
 }
 
-object Game {
-  def main(args: Array[String]): Unit = unravel() foreach println
+case class Game(player1: Player, player2: Player) {
 
-  private val user = new User(Symbol.O)
-  private val computer = new Computer(Symbol.X)
+  def unravel(): Seq[State] = {
+    val initialState = State(Board.empty(3), player1)
+    lazy val states: LazyList[State] = initialState #:: states.map(nextState)
+    val (nonFinalStates, finalStates) = states span (state => !state.board.isFinal)
+    nonFinalStates ++ (finalStates take 1)
+  }
+
+  private def nextState(current: State): State = {
+    def flip(player: Player): Player =
+      if (player == player1) player2 else player1
+
+    current match {
+      case State(board, player) => State(player play board, flip(player))
+    }
+  }
 
   case class State(board: Board, player: Player) {
     override def toString: String = {
@@ -54,20 +66,12 @@ object Game {
     private def result(board: Board): String =
       board.outcome map (m => s"$m wins!") getOrElse "Tie"
   }
+}
 
-  def unravel(): Seq[State] = {
-    val initialState = State(Board.empty(3), user)
-    lazy val states: LazyList[State] = initialState #:: states.map(nextState)
-    val (nonFinalStates, finalStates) = states span (state => !state.board.isFinal)
-    nonFinalStates ++ (finalStates take 1)
-  }
+object Game {
+  private val user = User(Symbol.O)
+  private val computer = Computer(Symbol.X)
 
-  private def nextState(current: State): State = {
-    def flip(player: Player): Player =
-      if (player == user) computer else user
-
-    current match {
-      case State(board, player) => State(player play board, flip(player))
-    }
-  }
+  def main(args: Array[String]): Unit =
+    Game(user, computer).unravel() foreach println
 }
