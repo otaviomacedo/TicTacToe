@@ -10,8 +10,7 @@ trait Player {
 class User(symbol: Symbol) extends Player {
   override def play(board: Board): Board = {
     try {
-      val move = readLine().toInt
-      board.mark(symbol, move)
+      board.mark(symbol, readLine().toInt)
     } catch {
       case e: Exception =>
         println(e.getMessage)
@@ -33,40 +32,44 @@ class Computer(symbol: Symbol) extends Player {
       val moves = board.possibleMoves(symbol).map {
         board => (board, bestMove(flip(symbol), board, ordering.reverse))
       }
-      val x = moves.maxBy(_._2._2)(ordering)
-      (x._1, x._2._2)
+
+      val (move, (_, winner)) = moves.maxBy(_._2._2)(ordering)
+      (move, winner)
     }
-  }
-}
-
-class Game {
-  def start(): Unit = {
-    val user = new User(Symbol.O)
-    val computer = new Computer(Symbol.X)
-    var board = Board.newInstance(3)
-
-    println(board)
-    while (!endOfGame()) {
-      playersTurn(user)
-      playersTurn(computer)
-    }
-
-    println(board.outcome match {
-      case Some(X) => "I win!"
-      case Some(O) => "You win!"
-      case None => "Tie"
-    })
-
-    def playersTurn(player: Player): Unit = {
-      board = player.play(board)
-      println(board)
-      println()
-    }
-
-    def endOfGame(): Boolean = board.isFinal
   }
 }
 
 object Game {
-  def main(args: Array[String]): Unit = new Game().start()
+  def main(args: Array[String]): Unit = unravel() foreach println
+
+  private val user = new User(Symbol.O)
+  private val computer = new Computer(Symbol.X)
+
+  val players: Iterator[Player] = Iterator.continually(List(user, computer)).flatten
+
+  case class State(board: Board, player: Player) {
+    override def toString: String = {
+      val footer = if (board.isFinal) "\n" + result(board) else ""
+      board.toString + "\n" + footer
+    }
+
+    private def result(board: Board): String =
+      board.outcome map (m => s"$m wins!") getOrElse "Tie"
+  }
+
+  def unravel(): Seq[State] = {
+    val initialState = State(Board.empty(3), user)
+    lazy val states: LazyList[State] = initialState #:: states.map(nextState)
+    val (nonFinalStates, finalStates) = states span (state => !state.board.isFinal)
+    nonFinalStates ++ (finalStates take 1)
+  }
+
+  private def nextState(current: State): State = {
+    def flip(player: Player): Player =
+      if (player == user) computer else user
+
+    current match {
+      case State(board, player) => State(player play board, flip(player))
+    }
+  }
 }

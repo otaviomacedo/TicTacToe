@@ -6,7 +6,7 @@ import Symbol.{Symbol, _}
 import Util.{isPerfectSquare, scanF}
 
 object Board {
-  def newInstance(n: Int) = new Board(Array.fill[Option[Symbol]](n * n)(None))
+  def empty(n: Int) = new Board(Array.fill[Option[Symbol]](n * n)(None))
 }
 
 case class Board(cells: Seq[Option[Symbol]]) {

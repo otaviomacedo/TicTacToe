@@ -3,12 +3,12 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class BoardTest extends AnyFunSuite {
   test("Initial board should not be final") {
-    val board = Board.newInstance(3)
+    val board = Board.empty(3)
     assert(!board.isFinal)
   }
 
   test("No winner yet, but lots of symbols already written") {
-    val board = Board.newInstance(3)
+    val board = Board.empty(3)
 
     val result = board
       .mark(X, 0).mark(O, 1).mark(X, 2)
@@ -18,7 +18,7 @@ class BoardTest extends AnyFunSuite {
   }
 
   test("Same elements in a row") {
-    val board = Board.newInstance(3)
+    val board = Board.empty(3)
 
     val result = board
       .mark(X, 0)
@@ -30,7 +30,7 @@ class BoardTest extends AnyFunSuite {
   }
 
   test("Same elements in a column") {
-    val board = Board.newInstance(3)
+    val board = Board.empty(3)
 
     val result = board
       .mark(X, 1).mark(X, 4).mark(X, 7)
@@ -40,7 +40,7 @@ class BoardTest extends AnyFunSuite {
   }
 
   test("Same elements in a diagonal") {
-    val board = Board.newInstance(3)
+    val board = Board.empty(3)
 
     val result = board
       .mark(X, 2)
@@ -52,7 +52,7 @@ class BoardTest extends AnyFunSuite {
   }
 
   test("Full board is a final position") {
-    val board = Board.newInstance(3)
+    val board = Board.empty(3)
 
     val result = board
       .mark(X, 0).mark(O, 1).mark(X, 2)
@@ -64,7 +64,7 @@ class BoardTest extends AnyFunSuite {
   }
 
   test("Possible moves") {
-    val board = Board.newInstance(3)
+    val board = Board.empty(3)
 
     val result = board
       .mark(X, 1)
