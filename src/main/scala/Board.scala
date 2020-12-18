@@ -44,9 +44,10 @@ case class Board(cells: Seq[Option[Symbol]]) {
 
   lazy val outcome: GameOutcome = {
     def product(a: GameOutcome, b: GameOutcome): GameOutcome = if (a == b) a else None
-    def winner(array: Seq[Int]): GameOutcome = array map cells reduce product
+    def maximal(a: GameOutcome, b: GameOutcome): GameOutcome = if (product(a, b) == a) b else a
+    def winner(positions: Seq[Int]): GameOutcome = positions map cells reduce product
 
-    Vector(rows, columns, diagonals).flatten map winner find(_.isDefined) getOrElse None
+    Vector(rows, columns, diagonals).flatten map winner reduce maximal
   }
 
   override def toString: String = {
