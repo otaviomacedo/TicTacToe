@@ -9,7 +9,7 @@ object Board {
   def newInstance(n: Int) = new Board(Array.fill[Option[Symbol]](n * n)(None))
 }
 
-class Board(val cells: Seq[Option[Symbol]]) {
+case class Board(cells: Seq[Option[Symbol]]) {
   type GameOutcome = Option[Symbol]
 
   if (!isPerfectSquare(cells.length)) {
@@ -62,21 +62,5 @@ class Board(val cells: Seq[Option[Symbol]]) {
       .map(_.getOrElse(" "))       //   Convert the symbols to strings
       .mkString(" | ")             //   Generate the string for the row
     ).mkString(verticalSeparator)  // Generate the string for the whole board
-  }
-
-  def canEqual(other: Any): Boolean = other.isInstanceOf[Board]
-
-  override def equals(other: Any): Boolean = other match {
-    case that: Board =>
-      (that canEqual this) &&
-        this.cells.corresponds(that.cells){
-          case(x, y) => x.equals(y)
-        }
-    case _ => false
-  }
-
-  override def hashCode(): Int = {
-    val state = cells
-    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
   }
 }
