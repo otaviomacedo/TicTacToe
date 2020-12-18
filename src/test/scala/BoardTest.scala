@@ -1,7 +1,7 @@
-import Symbol.{Symbol, _}
-import org.scalatest.FunSuite
+import Symbol._
+import org.scalatest.funsuite.AnyFunSuite
 
-class BoardTest extends FunSuite {
+class BoardTest extends AnyFunSuite {
   test("Initial board should not be final") {
     val board = Board.newInstance(3)
     assert(!board.isFinal)
