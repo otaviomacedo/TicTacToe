@@ -39,10 +39,12 @@ case class Board(cells: Seq[Option[Symbol]]) {
   def isFinal: Boolean = outcome.isDefined || cells.forall(_.isDefined)
 
   lazy val outcome: GameOutcome = {
+    // product is an associative, commutative and idempotent binary operation.
+    // Therefore it induces a partial order on GameOutcome, represented by maximal.
     def product(a: GameOutcome, b: GameOutcome): GameOutcome = if (a == b) a else None
     def maximal(a: GameOutcome, b: GameOutcome): GameOutcome = if (product(a, b) == a) b else a
-    def winner(positions: Seq[Int]): GameOutcome = positions map cells reduce product
 
+    def winner(positions: Seq[Int]): GameOutcome = positions map cells reduce product
     Vector(rows, columns, diagonals).flatten map winner reduce maximal
   }
 
