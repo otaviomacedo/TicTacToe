@@ -17,15 +17,17 @@ case class Board(cells: Seq[Option[Symbol]]) {
   }
 
   private val n = Math.sqrt(cells.length).toInt
-  private val firstRow: Seq[Int] = 0 until n
-  private val nextRow = (r: Seq[Int]) => r.map(_ + n)
-  private val firstColumn: Seq[Int] = 0 until n map (_ * n)
-  private val nextColumn = (r: Seq[Int]) => r.map(_ + 1)
-  private val mainDiagonal: Seq[Int] = 0 until n map (_ * (n + 1))
-  private val nextDiagonal = (r: Seq[Int]) => r.map(x => x + (n*n - 1 - 2 * x) / (n + 1))
 
+  private val firstRow: Seq[Int] = 0 until n
+  private def nextRow(r: Seq[Int]): Seq[Int] = r.map(_ + n)
   private def rows: Seq[Seq[Int]] = scanF(firstRow, nextRow, n)
+
+  private val firstColumn: Seq[Int] = 0 until n map (_ * n)
+  private def nextColumn(r: Seq[Int]): Seq[Int] = r.map(_ + 1)
   private def columns: Seq[Seq[Int]] = scanF(firstColumn, nextColumn, n)
+
+  private val mainDiagonal: Seq[Int] = 0 until n map (_ * (n + 1))
+  private def nextDiagonal(r: Seq[Int]): Seq[Int] = r.map(x => x + (n*n - 1 - 2 * x) / (n + 1))
   private def diagonals: Seq[Seq[Int]] = scanF(mainDiagonal, nextDiagonal, 2)
 
   def mark(symbol: Symbol, index: Int): Board = {

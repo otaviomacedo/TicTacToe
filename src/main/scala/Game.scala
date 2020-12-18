@@ -29,18 +29,16 @@ case class Computer(symbol: Symbol) extends Player {
 
     if (board.isFinal) (board, board.outcome)
     else {
-      val moves = board.possibleMoves(symbol).map {
+      val (move, (_, winner)) = (board possibleMoves symbol).map {
         board => (board, bestMove(flip(symbol), board)(ordering.reverse))
-      }
+      }.maxBy(_._2._2)
 
-      val (move, (_, winner)) = moves.maxBy(_._2._2)
       (move, winner)
     }
   }
 }
 
 case class Game(player1: Player, player2: Player) {
-
   def unravel(board: Board): Seq[State] = {
     val initialState = State(board, player1)
     lazy val states: LazyList[State] = initialState #:: states.map(nextState)
