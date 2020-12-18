@@ -24,6 +24,10 @@ class Board(val cells: Seq[Option[Symbol]]) {
   private val mainDiagonal: Seq[Int] = 0 until n map (_ * (n + 1))
   private val nextDiagonal = (r: Seq[Int]) => r.map(x => x + (n*n - 1 - 2 * x) / (n + 1))
 
+  private val rows = scanF(firstRow, nextRow, n)
+  private val columns = scanF(firstColumn, nextColumn, n)
+  private val diagonals = scanF(mainDiagonal, nextDiagonal, 2)
+
   def mark(symbol: Symbol, index: Int): Board = {
     if (cells(index).isDefined)
       throw new Exception(s"Position $index already marked")
@@ -41,11 +45,11 @@ class Board(val cells: Seq[Option[Symbol]]) {
 
     def winner(array: Seq[Int]): GameOutcome = array map cells reduceLeft product
 
-    val rows = scanF(firstRow, nextRow, n) map winner
-    val columns = scanF(firstColumn, nextColumn, n) map winner
-    val diagonals = scanF(mainDiagonal, nextDiagonal, 2) map winner
+    val rowWinner = rows map winner
+    val columnWinner = columns map winner
+    val diagonalWinner = diagonals map winner
 
-    Vector(rows, columns, diagonals).flatten find(_.isDefined) getOrElse None
+    Vector(rowWinner, columnWinner, diagonalWinner).flatten find(_.isDefined) getOrElse None
   }
 
   override def toString: String = {
@@ -53,11 +57,11 @@ class Board(val cells: Seq[Option[Symbol]]) {
       .fill[String](n)("-")
       .mkString("\n", "-|-", "\n")
 
-    (scanF(firstRow, nextRow, n) map (_ // Generate all rows
-        .map(cells)                     // Transform the positions into symbols
-        .map(_.getOrElse(" "))          // Convert the symbols to strings
-        .mkString(" | ")                // Generate the string for the row
-      )).mkString(verticalSeparator)    // Generate the string for the whole board
+    rows.map(_                     // For each row:
+      .map(cells)                  //   Transform the positions into symbols
+      .map(_.getOrElse(" "))       //   Convert the symbols to strings
+      .mkString(" | ")             //   Generate the string for the row
+    ).mkString(verticalSeparator)  // Generate the string for the whole board
   }
 
   def canEqual(other: Any): Boolean = other.isInstanceOf[Board]
