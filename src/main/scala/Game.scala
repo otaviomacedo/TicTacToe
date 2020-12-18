@@ -41,8 +41,8 @@ case class Computer(symbol: Symbol) extends Player {
 
 case class Game(player1: Player, player2: Player) {
 
-  def unravel(): Seq[State] = {
-    val initialState = State(Board.empty(3), player1)
+  def unravel(board: Board): Seq[State] = {
+    val initialState = State(board, player1)
     lazy val states: LazyList[State] = initialState #:: states.map(nextState)
     val (nonFinalStates, finalStates) = states span (state => !state.board.isFinal)
     nonFinalStates ++ (finalStates take 1)
@@ -71,7 +71,10 @@ case class Game(player1: Player, player2: Player) {
 object Game {
   private val user = User(Symbol.O)
   private val computer = Computer(Symbol.X)
+  private val emptyBoard = Board.empty(3)
 
-  def main(args: Array[String]): Unit =
-    Game(user, computer).unravel() foreach println
+  def main(args: Array[String]): Unit = {
+    val history = Game(user, computer) unravel emptyBoard
+    history foreach println
+  }
 }
