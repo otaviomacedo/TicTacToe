@@ -22,18 +22,18 @@ case class User(symbol: Symbol) extends Player {
 case class Computer(symbol: Symbol) extends Player {
   private val myOrdering: Ordering[Option[Symbol.Value]] = explicitOrdering(Some(O), None, Some(X))
 
-  override def play(board: Board): Board = bestMove(symbol, board, myOrdering)._1
+  override def play(board: Board): Board = bestMove(symbol, board)(myOrdering)._1
 
-  private def bestMove(symbol: Symbol, board: Board, ordering: Ordering[Option[Symbol]]): (Board, Option[Symbol]) = {
+  private def bestMove(symbol: Symbol, board: Board)(implicit ordering: Ordering[Option[Symbol]]): (Board, Option[Symbol]) = {
     def flip(symbol: Symbol): Symbol = if (symbol == X) O else X
 
     if (board.isFinal) (board, board.outcome)
     else {
       val moves = board.possibleMoves(symbol).map {
-        board => (board, bestMove(flip(symbol), board, ordering.reverse))
+        board => (board, bestMove(flip(symbol), board)(ordering.reverse))
       }
 
-      val (move, (_, winner)) = moves.maxBy(_._2._2)(ordering)
+      val (move, (_, winner)) = moves.maxBy(_._2._2)
       (move, winner)
     }
   }
