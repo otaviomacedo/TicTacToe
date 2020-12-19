@@ -57,12 +57,10 @@ case class Game(player1: Player, player2: Player) {
 
   case class State(board: Board, player: Player) {
     override def toString: String = {
-      val footer = if (board.isFinal) "\n" + result(board) else ""
+      lazy val result = "\n" + (board.outcome map (m => s"$m wins!") getOrElse "Tie")
+      val footer = if (board.isFinal) result else ""
       board.toString + "\n" + footer
     }
-
-    private def result(board: Board): String =
-      board.outcome map (m => s"$m wins!") getOrElse "Tie"
   }
 }
 
