@@ -34,7 +34,9 @@ case class Board(cells: Seq[Option[Symbol]]) {
   }
 
   def possibleMoves(symbol: Symbol): Seq[Board] =
-    cells.zipWithIndex.filter(_._1.isEmpty).map(pair => mark(symbol, pair._2))
+    cells.indices
+      .filter(i => cells(i).isEmpty)
+      .map(i => mark(symbol, i))
 
   def isFinal: Boolean = outcome.isDefined || cells.forall(_.isDefined)
 
