@@ -38,7 +38,7 @@ class GameTest extends AnyFunSuite with MockitoSugar {
       x, o, e,
       x, e, e))
 
-    val history = Game(player1, player2) unravel Board.empty(3)
+    val history = Game(player1, player2, Board.empty(3)).unravel()
 
     assert(history.last.board == Board(Vector(
       x, o, e,
