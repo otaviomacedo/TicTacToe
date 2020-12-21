@@ -20,7 +20,7 @@ case class User(symbol: Symbol) extends Player {
 }
 
 case class Computer(symbol: Symbol) extends Player {
-  private val myOrdering: Ordering[Option[Symbol.Value]] = explicitOrdering(Some(O), None, Some(X))
+  private val myOrdering: Ordering[Option[Value]] = explicitOrdering(Some(O), None, Some(X))
 
   override def play(board: Board): Board = bestMove(symbol, board)(myOrdering)._1
 
@@ -65,8 +65,8 @@ case class Game(player1: Player, player2: Player, board: Board) {
 }
 
 object Game {
-  private val user = User(Symbol.O)
-  private val computer = Computer(Symbol.X)
+  private val user = User(O)
+  private val computer = Computer(X)
   private val emptyBoard = Board.empty(3)
 
   def main(args: Array[String]): Unit = {
