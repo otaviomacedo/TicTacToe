@@ -30,7 +30,7 @@ case class Board(cells: Seq[Option[Symbol]]) {
 
   def mark(symbol: Symbol, index: Int): Board = {
     require(cells(index).isEmpty, s"Position $index already marked")
-    new Board(cells.updated(index, Some(symbol)))
+    Board(cells.updated(index, Some(symbol)))
   }
 
   def possibleMoves(symbol: Symbol): Seq[Board] =
