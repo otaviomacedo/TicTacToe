@@ -47,7 +47,7 @@ case class Board(cells: Seq[Option[Symbol]]) {
     def maximal(a: GameOutcome, b: GameOutcome): GameOutcome = if (product(a, b) == a) b else a
 
     def winner(positions: Seq[Int]): GameOutcome = positions map cells reduce product
-    Vector(rows, columns, diagonals).flatten map winner reduce maximal
+    (rows ++ columns ++ diagonals) map winner reduce maximal
   }
 
   override def toString: String = {
