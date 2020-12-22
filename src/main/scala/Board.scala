@@ -41,8 +41,9 @@ case class Board(cells: Seq[Option[Symbol]]) {
   def isFinal: Boolean = outcome.isDefined || cells.forall(_.isDefined)
 
   lazy val outcome: GameOutcome = {
-    def product(a: GameOutcome, b: GameOutcome): GameOutcome = if (a == b) a else None
-    def winner(positions: Seq[Int]): GameOutcome = positions map cells reduce product
+    def winner(positions: Seq[Int]): GameOutcome = positions map cells reduce {
+      (a, b) => if (a == b) a else None
+    }
 
     ((rows ++ columns ++ diagonals) map winner find (_.isDefined)).flatten
   }
