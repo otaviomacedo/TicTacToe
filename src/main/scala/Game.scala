@@ -65,12 +65,8 @@ case class Game(player1: Player, player2: Player, board: Board) {
 }
 
 object Game {
-  private val user = User(O)
-  private val computer = Computer(X)
-  private val emptyBoard = Board.empty(3)
-
   def main(args: Array[String]): Unit = {
-    val history = Game(user, computer, emptyBoard).unravel()
-    history foreach println
+    val game = Game(User(O), Computer(X), Board.empty(3))
+    game.unravel() foreach println
   }
 }
