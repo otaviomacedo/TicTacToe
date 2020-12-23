@@ -30,7 +30,7 @@ case class Computer(symbol: Symbol) extends Player {
     if (board.isFinal) (board, board.outcome)
     else {
       val (move, (_, winner)) = (board possibleMoves symbol).map {
-        board => (board, bestMove(flip(symbol), board)(ordering.reverse))
+        child => (child, bestMove(flip(symbol), child)(ordering.reverse))
       }.maxBy(_._2._2)
 
       (move, winner)
