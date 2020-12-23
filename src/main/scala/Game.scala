@@ -42,7 +42,7 @@ case class Game(player1: Player, player2: Player, board: Board) {
   def unravel(): Seq[State] = {
     val initialState = State(board, player1)
     val states: Seq[State] = LazyList.iterate(initialState)(nextState)
-    val (nonFinalStates, finalStates) = states span (state => !state.board.isFinal)
+    val (nonFinalStates, finalStates) = states span (!_.board.isFinal)
     nonFinalStates ++ (finalStates take 1)
   }
 
