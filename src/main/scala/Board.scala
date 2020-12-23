@@ -17,16 +17,13 @@ case class Board(cells: Seq[Option[Symbol]]) {
   private val n = Math.sqrt(cells.length).toInt
 
   private val firstRow: Seq[Int] = 0 until n
-  private def nextRow(r: Seq[Int]): Seq[Int] = r.map(_ + n)
-  private def rows: Seq[Seq[Int]] = LazyList.iterate(firstRow, n)(nextRow)
+  private def rows: Seq[Seq[Int]] = LazyList.iterate(firstRow, n)(_.map(_ + n))
 
   private val firstColumn: Seq[Int] = 0 until n map (_ * n)
-  private def nextColumn(r: Seq[Int]): Seq[Int] = r.map(_ + 1)
-  private def columns: Seq[Seq[Int]] = LazyList.iterate(firstColumn, n)(nextColumn)
+  private def columns: Seq[Seq[Int]] = LazyList.iterate(firstColumn, n)(_.map(_ + 1))
 
   private val mainDiagonal: Seq[Int] = 0 until n map (_ * (n + 1))
-  private def nextDiagonal(r: Seq[Int]): Seq[Int] = r.map(x => x + (n*n - 1 - 2 * x) / (n + 1))
-  private def diagonals: Seq[Seq[Int]] = LazyList.iterate(mainDiagonal, 2)(nextDiagonal)
+  private def diagonals: Seq[Seq[Int]] = LazyList.iterate(mainDiagonal, 2)(_.map(x => x + (n * n - 1 - 2 * x) / (n + 1)))
 
   def mark(symbol: Symbol, index: Int): Board = {
     require(cells(index).isEmpty, s"Position $index already marked")
