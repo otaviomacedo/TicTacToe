@@ -37,8 +37,8 @@ case class Board(cells: Seq[Option[Symbol]]) {
 
   def possibleMoves(symbol: Symbol): Seq[Board] =
     cells.indices
-      .filter(i => cells(i).isEmpty)
-      .map(i => mark(symbol, i))
+      .filter(cells(_).isEmpty)
+      .map(mark(symbol, _))
 
   def isFinal: Boolean = outcome.isDefined || cells.forall(_.isDefined)
 
@@ -51,14 +51,13 @@ case class Board(cells: Seq[Option[Symbol]]) {
   }
 
   override def toString: String = {
-    val verticalSeparator = Array
+    val horizontalSeparator = Array
       .fill[String](n)("-")
       .mkString("\n", "-|-", "\n")
 
-    rows.map(_                     // For each row:
-      .map(cells)                  //   Transform the positions into symbols
-      .map(_.getOrElse(" "))       //   Convert the symbols to strings
-      .mkString(" | ")             //   Generate the string for the row
-    ).mkString(verticalSeparator)  // Generate the string for the whole board
+    rows.map(_                       // For each row:
+      .map(cells(_) getOrElse " ")   //   Map the positions to symbols
+      .mkString(" | ")               //   Generate the string for the row
+    ).mkString(horizontalSeparator)  // Generate the string for the whole board
   }
 }
