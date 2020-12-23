@@ -2,11 +2,16 @@ object Symbol extends Enumeration {
   type Symbol = Value
   val X, O = Value
 }
+import Board.isPerfectSquare
 import Symbol.{Symbol, _}
-import Util.isPerfectSquare
 
 object Board {
   def empty(n: Int) = new Board(Array.fill[Option[Symbol]](n * n)(None))
+
+  private def isPerfectSquare(n: Int): Boolean = {
+    val closestRoot = Math.sqrt(n)
+    n == closestRoot * closestRoot
+  }
 }
 
 case class Board(cells: Seq[Option[Symbol]]) {

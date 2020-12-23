@@ -1,5 +1,4 @@
 import Symbol._
-import Util.explicitOrdering
 
 import scala.io.StdIn.readLine
 
@@ -20,7 +19,8 @@ case class User(symbol: Symbol) extends Player {
 }
 
 case class Computer(symbol: Symbol) extends Player {
-  private val myOrdering: Ordering[Option[Value]] = explicitOrdering(Some(O), None, Some(X))
+  private val myOrdering: Ordering[Option[Value]] =
+    Ordering.by(Array(Some(O), None, Some(X)) indexOf _)
 
   override def play(board: Board): Board = bestMove(symbol, board)(myOrdering)._1
 
