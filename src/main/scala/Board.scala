@@ -3,7 +3,7 @@ object Symbol extends Enumeration {
   val X, O = Value
 }
 import Symbol.{Symbol, _}
-import Util.{isPerfectSquare, scanF}
+import Util.isPerfectSquare
 
 object Board {
   def empty(n: Int) = new Board(Array.fill[Option[Symbol]](n * n)(None))
