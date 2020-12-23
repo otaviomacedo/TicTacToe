@@ -64,9 +64,7 @@ case class Game(player1: Player, player2: Player, board: Board) {
   }
 }
 
-object Game {
-  def main(args: Array[String]): Unit = {
-    val game = Game(User(O), Computer(X), Board.empty(3))
-    game.unravel() foreach println
-  }
+object Game extends App {
+  val game = Game(User(O), Computer(X), Board.empty(3))
+  game.unravel() foreach println
 }
