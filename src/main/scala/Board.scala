@@ -2,22 +2,14 @@ object Symbol extends Enumeration {
   type Symbol = Value
   val X, O = Value
 }
-import Board.isPerfectSquare
 import Symbol.{Symbol, _}
 
 object Board {
   def empty(n: Int) = new Board(Array.fill[Option[Symbol]](n * n)(None))
-
-  private def isPerfectSquare(n: Int): Boolean = {
-    val closestRoot = Math.sqrt(n)
-    n == closestRoot * closestRoot
-  }
 }
 
-case class Board(cells: Seq[Option[Symbol]]) {
+case class Board (cells: Seq[Option[Symbol]]) {
   type GameOutcome = Option[Symbol]
-
-  require(isPerfectSquare(cells.length), "Invalid board size")
 
   private val n = Math.sqrt(cells.length).toInt
 
@@ -55,9 +47,7 @@ case class Board(cells: Seq[Option[Symbol]]) {
       .fill[String](n)("-")
       .mkString("\n", "-|-", "\n")
 
-    rows.map(_                       // For each row:
-      .map(cells(_) getOrElse " ")   //   Map the positions to symbols
-      .mkString(" | ")               //   Generate the string for the row
-    ).mkString(horizontalSeparator)  // Generate the string for the whole board
+    def rowToString(row: Seq[Int]) = row.map(cells(_) getOrElse " ").mkString(" | ")
+    rows.map(rowToString).mkString(horizontalSeparator)
   }
 }
