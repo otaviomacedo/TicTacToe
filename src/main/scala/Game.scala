@@ -1,4 +1,4 @@
-import Symbol._
+import Symbol.{Symbol, _}
 
 import scala.io.StdIn.readLine
 
@@ -20,13 +20,11 @@ case class User(symbol: Symbol) extends Player {
 
 case class Computer(symbol: Symbol) extends Player {
   private val myOrdering: Ordering[Option[Value]] =
-    Ordering.by(Array(Some(O), None, Some(X)) indexOf _)
+    Ordering.by(Array(Some(flip(symbol)), None, Some(symbol)) indexOf _)
 
   override def play(board: Board): Board = bestMove(symbol, board)(myOrdering)._1
 
   private def bestMove(symbol: Symbol, board: Board)(implicit ordering: Ordering[Option[Symbol]]): (Board, Option[Symbol]) = {
-    def flip(symbol: Symbol): Symbol = if (symbol == X) O else X
-
     if (board.isFinal) (board, board.outcome)
     else {
       val (move, (_, winner)) = (board possibleMoves symbol).map {
@@ -36,6 +34,8 @@ case class Computer(symbol: Symbol) extends Player {
       (move, winner)
     }
   }
+
+  private def flip(symbol: Symbol): Symbol = if (symbol == X) O else X
 }
 
 case class Game(player1: Player, player2: Player, board: Board) {
@@ -58,6 +58,6 @@ case class Game(player1: Player, player2: Player, board: Board) {
 }
 
 object Game extends App {
-  val game = Game(User(O), Computer(X), Board.empty(3))
+  val game = Game(Computer(O), Computer(X), Board.empty(3))
   game.unravel() foreach println
 }
